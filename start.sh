@@ -2,12 +2,7 @@
 
 case "$1" in
     sublime)
-		echo "starting sublime"
-		if [ -f /home/developer/project/flaeder.sublime-project ]; then
-        	subl --project /home/developer/project/flaeder.sublime-project
-        else
-        	subl /home/developer/project/
-        fi ;;
+        subl /home/developer/project
     term)
 		xterm ;;
     build)
@@ -17,5 +12,6 @@ case "$1" in
         cd /home/developer/project/build && cmake .. && make 
         ;;
     *)
-		subl /home/developer/project/ ;;
+        echo "Unknown command:" $1
+		exit -1 ;;
 esac
