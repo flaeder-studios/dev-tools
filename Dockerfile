@@ -13,20 +13,10 @@ RUN apt-get update && apt-get -y install \
 	make \
 	sublime-text \
 	xterm \
-    autoconf-archive \
-    bison \
-    flex \
-    gperf \
-    libcap-dev \
-    libevent-dev \
-    libgoogle-glog-dev \
-    libkrb5-dev \
-    libnuma-dev \
-    libsasl2-dev \
-    libssl-dev \
-    pkg-config \
-    unzip \
-    wget
+	libboost1.55-all-dev \
+        doxygen \
+        openssl
+
 
 # Replace 1000 with your user / group id
 RUN export uid=1000 gid=1000 && \
@@ -49,12 +39,10 @@ RUN chmod 600 /home/developer/repo-key
 RUN echo "IdentityFile /home/developer/repo-key" >> /etc/ssh/ssh_config
 RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
-# Install proxygen
-RUN mkdir -p /home/developer/external
-WORKDIR /home/developer/external
-RUN git clone git@github.com:facebook/proxygen.git
-WORKDIR /home/developer/external/proxygen/proxygen
-RUN git checkout tags/v0.32.0 && ./deps.sh && ./reinstall.sh
+# install netlib
+RUN git clone git://github.com/cpp-netlib/cpp-netlib.git && cd cpp-netlib && git submodule init && git submodule update
+RUN mkdir cpp-netlib/build && cd cpp-netlib/build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ ..
+RUN cd cpp-netlib/build && make && make test && make install
 
 # Add start scripts
 ADD start.sh /home/developer/
